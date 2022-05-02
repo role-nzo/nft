@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+        <link href="css/style.css?ver=0" rel="stylesheet">
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+        <script src="js/checker.js?ver=0"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="js/components/App.js" type="text/babel"></script>
+        <script src="js/components/Verifier.js" type="text/babel"></script>
+        
+        <script type="text/babel">
+            ReactDOM.render(
+                <React.StrictMode>
+                    <App/>
+                </React.StrictMode>,
+                document.querySelector('#root')
+            );
+        </script>
+</body>
+</html>

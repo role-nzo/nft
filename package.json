@@ -1,0 +1,28 @@
+{
+  "name": "hello-express",
+  "version": "0.0.1",
+  "description": "A simple Node app built on Express, instantly up and running.",
+  "main": "app.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app.mjs"
+  },
+  "devDependencies": {
+    "nodemon": "file:..."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/role-nzo/nft.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/role-nzo/nft/issues"
+  },
+  "homepage": "https://github.com/role-nzo/nft#readme",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "ipfs-core": "^0.14.3",
+    "node-fetch": "^2.6.7"
+  }
+}
