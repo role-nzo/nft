@@ -13,7 +13,7 @@ import { NFTStorage, File } from 'nft.storage'
 var app = express();
 app.use(fileUpload({
 	createParentPath: true,
-	useTempFiles : true,
+	useTempFiles : false,
 	tempFileDir : './tmp/'	
 }));
   
@@ -618,7 +618,15 @@ app.get('/new', function(req, res) {
 });
 
 app.post('/verify', function(req, res) {
-	contract.methods.tokenURI(req.body.certificate).call().then(function(data) {
+
+	let tokenId = req.body.certificate;
+
+	if(!tokenId || tokenId == '' || tokenId == undefined)
+		res.end("invalid");
+
+	tokenId = new Number(tokenId);
+
+	contract.methods.tokenURI(tokenId.toString()).call().then(function(data) {
 		res.end(data);
 	}).catch((err) => {
 		if(err.toString().includes("URI query for nonexistent token"))
@@ -636,34 +644,31 @@ app.post('/add', async function(req, res) {
 	}
 
 	console.log(`New certificate request:\n\tTitle: ${req.body.title}\n\tDescription: ${req.body.description}\n\tAuthor(s): ${req.body.author}\n\tImage: ${req.files.image.name}\n\tDocument: ${req.files.document.name}`)
-		
-	const metadata = await storage.store({
+
+	const metadata = storage.store({
 		name: req.body.title,
 		description: req.body.description,
-		image: new File(['<DATA>'], req.files.image.tempFilePath, { type: req.files.image.mimetype }),
+		image: new File([req.files.image.data], req.files.image.name, { type: req.files.image.mimetype }),
 		properties: {
 		  custom: {
 			  author: req.body.author,
-			  document: new File(['<DATA>'], req.files.document.tempFilePath, { type: req.files.document.mimetype })
+			  document: new File([req.files.document.data], req.files.document.name, { type: req.files.document.mimetype })
 		  }
 		}
+	}).then((data) => {
+		res.end(data.url);
+	}).catch(() => {
+		res.sendStatus(500);
 	});
-
-	fs.unlink(req.files.image.tempFilePath, (err) => err ? console.err("Error removing " + req.files.image.tempFilePath) : undefined);
-	fs.unlink(req.files.document.tempFilePath, (err) => err ? console.err("Error removing " + req.files.document.tempFilePath) : undefined);
-
-	console.log(metadata.url)
-
-	res.end(metadata.url);
 });
 
-app.get('*.js', function(req, res) {
+/*app.get('*.js', function(req, res) {
   res.sendFile(`views/${req.originalUrl.split('?').shift()}`, {root: "." });
 });
 
 app.get('*.css', function(req, res) {
   res.sendFile(`views/${req.originalUrl.split('?').shift()}`, {root: "." });
-});
+});*/
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);

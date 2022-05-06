@@ -61,6 +61,14 @@ body {
     position: absolute;
     width: 100%;
     bottom: 0;
+    height: 100%;
+    pointer-events: none;
+}
+
+#popups-aligner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .popup {
@@ -70,11 +78,19 @@ body {
     position: absolute;
     bottom: 0px;
     transition: transform 500ms;
+    pointer-events: initial;
 }
 
 .popup-inner {
+    overflow: hidden;
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03), 
+                0 2px 4px rgba(0,0,0,0.03), 
+                0 4px 8px rgba(0,0,0,0.03), 
+                0 8px 16px rgba(0,0,0,0.03),
+                0 16px 32px rgba(0,0,0,0.03), 
+                0 32px 64px rgba(0,0,0,0.03);
 }
 
 .popup-info .popup-inner {
@@ -114,6 +130,21 @@ body {
     background-size: contain;
 }
 
+.popup-static {
+    height: 70%;
+    transform: translateY(-50%) !important;
+    top: 50%;
+    width: 50%;
+}
+
+.popup-static .popup-inner {
+    color: #000000;
+    backdrop-filter: blur(0px);
+    background-color: #fafafa;
+    height: 100%;
+    padding: 0;
+}
+
 .popup-title {
     font-weight: 600;
     font-size: 120%;
@@ -121,9 +152,100 @@ body {
     padding-bottom: 10px;
 }
 
+.popup-static {
+    font-size: 125%;
+}
+
+.popup-static .popup-title {
+    padding: 0;
+}
+
+.popup-static-title {
+    font-size: 150%;
+    font-weight: 600;
+}
+
+.popup-static-author {
+    font-size: 120%;
+    margin-bottom: 1em;
+}
+
+.popup-static-description {
+    font-size: 80%;
+}
+
+.popup-static-title, .popup-static-author, .popup-static-description {
+    display: block;
+}
+
+.popup-inner-title {
+    font-weight: 600;
+    font-size: 110%;
+    display: block;
+    padding-bottom: 5px;
+}
+
 .popup-close {
     position: absolute;
     top: 30px;
     right: 30px;
     cursor: pointer;
+}
+
+.popup-static .popup-close {
+    text-shadow: 0 0 2px white;
+}
+
+.popup span {
+    padding-right: 6px;
+}
+
+.popup a {
+    background-color: #007bff;
+    border-color: #007bff;
+    display: block;
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.popup-img {
+    background: -webkit-linear-gradient(50deg, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(50deg, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    height: 180px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.popup-static .popup-static-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-static .popup-static-inner {
+    padding: 20px;
+}
+
+.popup-static .popup-static-content .popup-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.popup-static .popup-static-content .popup-bottom a {
+    display: block;
+    text-align: center;
+}
+
+.popup-img img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 10px;
 }

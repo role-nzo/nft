@@ -4,6 +4,7 @@ class Popup extends React.Component {
 
         this.myRef = React.createRef();
         this.deletePopup = this.props.deletePopup.bind(this.props.parent);
+        this.startDying = this.startDying.bind(this);
     }
 
     componentDidMount() {
@@ -11,8 +12,12 @@ class Popup extends React.Component {
         
         if(this.props.duration > 0)
             setTimeout(() => {
-                gsap.to(this.myRef.current, {opacity: 0}).then(() => this.deletePopup(this.props.internalId));
+                this.startDying()
             }, this.props.duration);
+    }
+
+    startDying() {
+        gsap.to(this.myRef.current, {opacity: 0}).then(() => this.deletePopup(this.props.internalId));
     }
 
     render() {
@@ -20,13 +25,13 @@ class Popup extends React.Component {
         classes += ' popup-' + this.props.type;
 
         let style = {
-            transform: 'translateY(' + (-this.props.height * 100) + 'px)'
+            transform: 'translateY(calc(' + (-this.props.height * 100) + '% + ' + (20 * this.props.height) + 'px))'
         };
 
         let closeButton;
 
         if(this.props.duration == 0 && this.props.type !== 'loading')
-            closeButton = <span className="popup-close" onClick={() => this.deletePopup(this.props.internalId)}>x</span>;
+            closeButton = <span className="popup-close" onClick={() => this.startDying()}>x</span>;
 
         return (
             <div className={classes} ref={this.myRef} style={style}>

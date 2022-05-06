@@ -43,7 +43,7 @@ class Popupper extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id="popups-aligner">
                 {this.state.popups.map(popup =>
                     <Popup
                         key={popup.id}

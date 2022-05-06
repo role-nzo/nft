@@ -17,9 +17,7 @@ class Inserter extends React.Component {
     insert(event) {
         event.preventDefault();
 
-        this.setState({
-            waiting: true
-        });
+        let popup_id_ipfs, popup_id_eth;
 
         const formData = new FormData();
         formData.append('title', event.target.querySelector("#title").value);
@@ -34,19 +32,29 @@ class Inserter extends React.Component {
             data: formData,
             processData: false,
             contentType: false,
+            beforeSend: () => {
+                popup_id_ipfs = getPopupper().addPopup("Adding data to the IPFS network", "Please wait...", 'loading', 0);
+            },
             success: (data) => {
+                getPopupper().addPopup("Data successfully added to the IPFS network", "Plase confirm the transaction to mint.", 'success', 10000);
+                popup_id_eth = getPopupper().addPopup("Minting the NFT", "Please wait...", 'loading', 0);
+
                 contract.methods.safeMint(this.props.account, data).send({ from: this.props.account }).then(async (data) => {
                     let receipt = await w3.eth.getTransactionReceipt(data.transactionHash);
-                    alert("Token ID: " + Web3.utils.hexToNumber( receipt.logs[0].topics[3]) );
-                    this.setState({
-                        waiting: false
-                    });
+                    let href = "/?tokenid="+ Web3.utils.hexToNumber( receipt.logs[0].topics[3]);
+                    
+                    getPopupper().addPopup("Certificate successfully added, Token ID: " + Web3.utils.hexToNumber( receipt.logs[0].topics[3]), (<a href={href}>Click here to see it</a>),'success', 0);
+                }).catch(() => {
+                    getPopupper().addPopup("Error adding the new certificate into the Ethereum Network", "Try again later", 'error', 10000);
+                }).then(() => {
+                    getPopupper().deletePopup(popup_id_eth);
                 });
             },
             error: () => {
-                this.setState({
-                    waiting: false
-                });
+                getPopupper().addPopup("Connection to the IPFS network failed", "Try again", 'error', 5);
+            },
+            complete: () => {
+                getPopupper().deletePopup(popup_id_ipfs);
             }
         });
     }
@@ -83,10 +91,6 @@ class Inserter extends React.Component {
         let content;
 
         if(this.state.minter === true) {
-            let classes = 'loading';
-
-            if(this.state.waiting)
-                classes += ' loading-show';
             content = (
                 <div className="direction-column">
                     <input type="text" id="title" name="title" placeholder="Titolo"/>
@@ -95,7 +99,6 @@ class Inserter extends React.Component {
                     <input type="file" id="image" name="image" placeholder="Immagine"/>
                     <input type="file" id="document" name="document" placeholder="Documento"/>
                     <button type="submit">Aggiungi</button>
-                    <div className={classes}><img src="images/loading.gif"></img></div>
                 </div>
             );
         } else if(this.state.minter === false) {
