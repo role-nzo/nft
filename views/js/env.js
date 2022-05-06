@@ -1,31 +1,15 @@
-/*const Web3 = require('Web3');
-var express = require('express'); 
+let w3;
+let popupper = React.createRef();
 
-var fs = require('fs');*/
-import Web3 from 'Web3';
-import  express from 'express';
-import fileUpload from 'express-fileupload';
-import bodyParser from 'body-parser';
-import * as fs from 'fs';
-import * as IPFS from 'ipfs-core';
-import { NFTStorage, File } from 'nft.storage'
+if (window.ethereum) {
+    w3 = new Web3(window.ethereum);
+} else if (window.web3) {
+    w3 = new Web3(window.web3.currentProvider);
+} else {
+    w3 = false;
+};
 
-var app = express();
-app.use(fileUpload({
-	createParentPath: true,
-	useTempFiles : true,
-	tempFileDir : './tmp/'	
-}));
-  
-// Abilitazione middleware.
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
-const hostname = '127.0.0.1';
-const port = 3000;
-const infura_url = 'https://rinkeby.infura.io/v3/1fb32b70673f49418ad5acb56cb8ed1d';
 const contract_address = '0x84c694F0c671624de7f77EED5685521b1d5E22ab';
-
 const abi = [
 	{
 		"inputs": [],
@@ -579,94 +563,20 @@ const abi = [
 		"type": "function"
 	}
 ];
+const contract = w3 ? new w3.eth.Contract(abi, contract_address) : undefined;
 
-const web3 = new Web3(infura_url);
-const contract = new web3.eth.Contract(abi, contract_address);
-const MINTER_ROLE = await contract.methods.MINTER_ROLE.call();
+function getPopupper() {
+	return popupper.current;
+}
 
-//const node = await IPFS.create();
-//const web3_storage_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGUzQzRDMzhkQjQ0ODdGQTA2OGFjNzI2NzcwQjU0OTdDODNiZDFhMjkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTE2NzYzNzA3MzUsIm5hbWUiOiJUZXNpIn0.jPvaFySgQvBefArDyi-OqIGUpN31xwz9gRQhiuy78EM';
-const nft_storage_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDMwZmYxQmJiOTEyYzlEYjk4M2RBNkZFQ0NjNzA5MDE5NjNCNUNjRDYiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MTY3NjcwNzAxMywibmFtZSI6IlRlc2kifQ.VqEhyNyjTo1Nt_9mH1vXhvSEnFL9C61HzrSkQExrU2M';
-const storage = new NFTStorage({ token: nft_storage_token })
+String.prototype.hexEncode = function(){
+    var hex, i;
 
-/*const metadata = await storage.store({
-	name: 'nft.storage store test',
-	description: 'Test ERC-1155 compatible metadata.',
-	image: new File(['<DATA>'], 'pinpie.jpg', { type: 'image/jpg' }),
-	properties: {
-	  custom: 'Custom data can appear here, files are auto uploaded.',
-	  file: new File(['<DATA>'], 'README.md', { type: 'text/plain' }),
-	}
-  })
-  
-  console.log('IPFS URL for the metadata:', metadata.url)
-  console.log('metadata.json contents:\n', metadata.data)
-  console.log('metadata.json with IPFS gateway URLs:\n', metadata.embed())*/
+    var result = "";
+    for (i=0; i<this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += ("000"+hex).slice(-4);
+    }
 
-/*const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/html');
-  res.sendFile('views/index.html', {root: __dirname })
-});*/
-
-app.get('/', function(req, res) {
-  res.render('index.ejs', {})
-});
-
-app.get('/new', function(req, res) {
-  res.render('new.ejs', {})
-});
-
-app.post('/verify', function(req, res) {
-	contract.methods.tokenURI(req.body.certificate).call().then(function(data) {
-		res.end(data);
-	}).catch((err) => {
-		if(err.toString().includes("URI query for nonexistent token"))
-			res.end("notfound");
-		else
-			res.end("error");
-	});
-});
-
-app.post('/add', async function(req, res) {
-
-	if(!req.files || !req.files.image || !req.files.document) {
-		res.sendStatus("400");
-		return;
-	}
-
-	console.log(`New certificate request:\n\tTitle: ${req.body.title}\n\tDescription: ${req.body.description}\n\tAuthor(s): ${req.body.author}\n\tImage: ${req.files.image.name}\n\tDocument: ${req.files.document.name}`)
-		
-	const metadata = await storage.store({
-		name: req.body.title,
-		description: req.body.description,
-		image: new File(['<DATA>'], req.files.image.tempFilePath, { type: req.files.image.mimetype }),
-		properties: {
-		  custom: {
-			  author: req.body.author,
-			  document: new File(['<DATA>'], req.files.document.tempFilePath, { type: req.files.document.mimetype })
-		  }
-		}
-	});
-
-	fs.unlink(req.files.image.tempFilePath, (err) => err ? console.err("Error removing " + req.files.image.tempFilePath) : undefined);
-	fs.unlink(req.files.document.tempFilePath, (err) => err ? console.err("Error removing " + req.files.document.tempFilePath) : undefined);
-
-	console.log(metadata.url)
-
-	res.end(metadata.url);
-});
-
-app.get('*.js', function(req, res) {
-  res.sendFile(`views/${req.originalUrl.split('?').shift()}`, {root: "." });
-});
-
-app.get('*.css', function(req, res) {
-  res.sendFile(`views/${req.originalUrl.split('?').shift()}`, {root: "." });
-});
-
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
-
-app.use(express.static('views'))
+    return result
+}

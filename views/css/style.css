@@ -1,3 +1,129 @@
+html {
+    height: 100%;
+}
+
 body {
     font-family: 'Montserrat';
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eaeaea;
+}
+
+#verifier input, #verifier button {
+    font-size: 1.5em;
+    font-family: 'Montserrat';
+    border: 0px;
+    padding: .75em 1em;
+}
+
+#verifier button {
+    cursor: pointer;
+    background-color: #aaaafa;
+}
+
+#verifier input:focus {
+    border: 0px;
+    outline: none;
+}
+
+.direction-column {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.loading {
+    opacity: 0;
+    pointer-events: none;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-show {
+    opacity: 1;
+    pointer-events: initial;
+}
+
+#popups {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+.popup {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0px;
+    transition: transform 500ms;
+}
+
+.popup-inner {
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.popup-info .popup-inner {
+    color: #856404;
+    background-color: #fff3cd;
+    border-left: 1px solid #ffeeba;
+    position: relative;
+}
+
+.popup-success .popup-inner {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.popup-error .popup-inner {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.popup-loading .popup-inner {
+    color: #004085;
+    background-color: #cce5ff;
+    border: 1px solid #b8daff;
+    padding-left: 80px;
+}
+
+.popup-loading .popup-inner:before {
+    content: "";
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    left: 35px;
+    top: 40px;
+    background-image: url('/images/loading.gif');
+    background-size: contain;
+}
+
+.popup-title {
+    font-weight: 600;
+    font-size: 120%;
+    display: block;
+    padding-bottom: 10px;
+}
+
+.popup-close {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    cursor: pointer;
 }

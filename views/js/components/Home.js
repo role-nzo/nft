@@ -1,4 +1,4 @@
-class App extends React.Component {
+class Home extends React.Component {
     constructor() {
         super();
     }
