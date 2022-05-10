@@ -1,3 +1,4 @@
+// Gestore dei popup
 class Popupper extends React.Component {
     constructor() {
         super();
@@ -11,6 +12,7 @@ class Popupper extends React.Component {
         this.addPopup = this.addPopup.bind(this);
     }
 
+    // Aggiunge un nuovo popup
     addPopup(title, description, type, duration) {
         let popups = this.state.popups;
 
@@ -31,6 +33,7 @@ class Popupper extends React.Component {
         return id;
     }
 
+    // Elimina un popup (senza animazione)
     deletePopup(id) {
         let popups = this.state.popups;
         

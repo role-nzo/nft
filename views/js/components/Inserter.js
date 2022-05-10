@@ -1,3 +1,5 @@
+// Una volta abilitato Metamask questo componente controlla se l'utente ha i permessi (MINTER_ROLE) per poter aggiungere un certificato;
+//  Se li possiede mostra i parametri d'inserimento
 class Inserter extends React.Component {
     constructor(props) {
         super(props);
@@ -10,10 +12,15 @@ class Inserter extends React.Component {
         };
     }
 
+    // Una volta creato l'oggetto viene controllato se l'utente possiede i permessi
     componentDidMount() {
         this.verifyRole();
     }
 
+    // Inserimento del nuovo certificato. Flusso:
+    //  client --> server (per l'aggiunta dei dati su IPFS)
+    //  server --> client (URL del descrittore JSON in IPFS, in caso di successo)
+    //  client --> Ethereum (chiamato safeMint sul contratto per il minting di un nuovo NFT)
     insert(event) {
         event.preventDefault();
 
@@ -40,6 +47,7 @@ class Inserter extends React.Component {
                 popup_id_eth = getPopupper().addPopup("Minting the NFT", "Please wait...", 'loading', 0);
 
                 contract.methods.safeMint(this.props.account, data).send({ from: this.props.account }).then(async (data) => {
+                    // Per ottenere indietro il tokenId del nuovo NFT
                     let receipt = await w3.eth.getTransactionReceipt(data.transactionHash);
                     let href = "/?tokenid="+ Web3.utils.hexToNumber( receipt.logs[0].topics[3]);
                     
@@ -59,6 +67,9 @@ class Inserter extends React.Component {
         });
     }
 
+    // Viene verificato che l'utente possieda i permessi necessari. Flusso:
+    //  client --> Ethereum (MINTER_ROLE(): chiede l'hash associato al ruolo MINTER_ROLE)
+    //  client --> Ethereum (hasRole(): verifica che l'utente possieda il ruolo MINTER_ROLE)
     verifyRole() {
         contract.methods.MINTER_ROLE().call().then(async (data) => {
             contract.methods.hasRole(data, this.props.account).call().then((isMinter) => {
@@ -69,7 +80,7 @@ class Inserter extends React.Component {
         });
     }
 
-    enable(event) {
+    /*enable(event) {
         event.preventDefault();
 
         if(window.ethereum) {
@@ -85,7 +96,7 @@ class Inserter extends React.Component {
                 minter: false
             })
         }
-    }
+    }*/
 
     render() {
         let content;

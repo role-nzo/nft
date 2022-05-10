@@ -1,3 +1,4 @@
+// Visualizza il tasto "Abilita" per l'abilitazione di Metamask (viene mostrato solo se questo non è già abilitato)
 class Enabler extends React.Component {
     constructor(props) {
         super(props);
@@ -6,11 +7,11 @@ class Enabler extends React.Component {
         this.enabled = this.props.enabled.bind(this.props.parent);
 
         this.state = {
-            enabled: undefined,
-            minter: undefined
+            enabled: undefined
         };
     }
 
+    // Abilita Metamask
     enable(event) {
         event.preventDefault();
 

@@ -1,3 +1,4 @@
+// Componente per la verifica di certificati on-chain
 class Verifier extends React.Component {
     constructor() {
         super();
@@ -5,12 +6,15 @@ class Verifier extends React.Component {
         this.submit = this.submit.bind(this);
     }
 
+    // Handler del form
     submit(event) {
         if(event)
             event.preventDefault();
 
         let id;
         
+        // Richiesta al server per la verifica del certificato
+        //  TODO: spostare tutto lato client per interazione diretta col contratto; interazione col server non necessaria
         jQuery.ajax({
             url: '/verify',
             method: 'post',
@@ -42,6 +46,7 @@ class Verifier extends React.Component {
 
     }
 
+    // Per ottenere il file JSON associato all'URI dell'NFT
     retrieveIPFSData(cid) {
         let id;
 

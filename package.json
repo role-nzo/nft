@@ -1,7 +1,7 @@
 {
-  "name": "hello-express",
+  "name": "certoken",
   "version": "0.0.1",
-  "description": "A simple Node app built on Express, instantly up and running.",
+  "description": "Validate and create new Certoken NFTs.",
   "main": "app.mjs",
   "type": "module",
   "scripts": {

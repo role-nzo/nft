@@ -1,6 +1,7 @@
 let w3;
 let popupper = React.createRef();
 
+// inizializzata l'istanza Web3 con le librerie iniettate da Metamask o analoghi
 if (window.ethereum) {
     w3 = new Web3(window.ethereum);
 } else if (window.web3) {
@@ -569,7 +570,7 @@ function getPopupper() {
 	return popupper.current;
 }
 
-String.prototype.hexEncode = function(){
+String.prototype.hexEncode = function() {
     var hex, i;
 
     var result = "";

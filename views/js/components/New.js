@@ -7,6 +7,7 @@ class New extends React.Component {
         };
     }
 
+    // Verifica che sia stata istanziata correttamente la libreria Web3; nel caso Metamask (o analogo) sia già abilitato ottiene direttamente gli indirizzi e abilita l'inserimento
     componentDidMount() {
         w3 && w3.eth.getAccounts().then(accounts => {
             if(accounts && accounts.length > 0)
@@ -14,6 +15,7 @@ class New extends React.Component {
         })
     }
 
+    // Abilita l'inserimento
     enabled(account) {
         this.setState({
             enabled: true,

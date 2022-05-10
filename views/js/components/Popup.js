@@ -2,11 +2,13 @@ class Popup extends React.Component {
     constructor(props) {
         super(props);
 
+        // Riferimento al nodo creato
         this.myRef = React.createRef();
         this.deletePopup = this.props.deletePopup.bind(this.props.parent);
         this.startDying = this.startDying.bind(this);
     }
 
+    // Gestisce l'animazione del popup e inizializza il timer nel caso duration > 0
     componentDidMount() {
         gsap.from(this.myRef.current, {opacity: 0});
         
@@ -16,6 +18,7 @@ class Popup extends React.Component {
             }, this.props.duration);
     }
 
+    // Gestisce l'animazione d'uscita del popup e successivamente viene eliminato
     startDying() {
         gsap.to(this.myRef.current, {opacity: 0}).then(() => this.deletePopup(this.props.internalId));
     }

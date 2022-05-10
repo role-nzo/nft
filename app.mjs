@@ -6,8 +6,8 @@ import Web3 from 'Web3';
 import  express from 'express';
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
-import * as fs from 'fs';
-import * as IPFS from 'ipfs-core';
+/*import * as fs from 'fs';
+import * as IPFS from 'ipfs-core';*/
 import { NFTStorage, File } from 'nft.storage'
 
 var app = express();
@@ -17,7 +17,7 @@ app.use(fileUpload({
 	tempFileDir : './tmp/'	
 }));
   
-// Abilitazione middleware.
+// Abilitazione middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -582,32 +582,10 @@ const abi = [
 
 const web3 = new Web3(infura_url);
 const contract = new web3.eth.Contract(abi, contract_address);
-const MINTER_ROLE = await contract.methods.MINTER_ROLE.call();
 
-//const node = await IPFS.create();
-//const web3_storage_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGUzQzRDMzhkQjQ0ODdGQTA2OGFjNzI2NzcwQjU0OTdDODNiZDFhMjkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTE2NzYzNzA3MzUsIm5hbWUiOiJUZXNpIn0.jPvaFySgQvBefArDyi-OqIGUpN31xwz9gRQhiuy78EM';
+// token API nft.storage
 const nft_storage_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDMwZmYxQmJiOTEyYzlEYjk4M2RBNkZFQ0NjNzA5MDE5NjNCNUNjRDYiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MTY3NjcwNzAxMywibmFtZSI6IlRlc2kifQ.VqEhyNyjTo1Nt_9mH1vXhvSEnFL9C61HzrSkQExrU2M';
 const storage = new NFTStorage({ token: nft_storage_token })
-
-/*const metadata = await storage.store({
-	name: 'nft.storage store test',
-	description: 'Test ERC-1155 compatible metadata.',
-	image: new File(['<DATA>'], 'pinpie.jpg', { type: 'image/jpg' }),
-	properties: {
-	  custom: 'Custom data can appear here, files are auto uploaded.',
-	  file: new File(['<DATA>'], 'README.md', { type: 'text/plain' }),
-	}
-  })
-  
-  console.log('IPFS URL for the metadata:', metadata.url)
-  console.log('metadata.json contents:\n', metadata.data)
-  console.log('metadata.json with IPFS gateway URLs:\n', metadata.embed())*/
-
-/*const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/html');
-  res.sendFile('views/index.html', {root: __dirname })
-});*/
 
 app.get('/', function(req, res) {
   res.render('index.ejs', {})
@@ -617,6 +595,12 @@ app.get('/new', function(req, res) {
   res.render('new.ejs', {})
 });
 
+/**
+ * URL per la verifica del certificato.
+ * Parametri ricevuti: tokenId (number)
+ * 
+ * TODO: spostare su client, non è necessario passare per il server
+ */
 app.post('/verify', function(req, res) {
 
 	let tokenId = req.body.certificate;
@@ -626,9 +610,11 @@ app.post('/verify', function(req, res) {
 	} else {
 		tokenId = new Number(tokenId);
 
+		// interazione con il contratto per ottenere i dati
 		contract.methods.tokenURI(tokenId.toString()).call().then(function(data) {
 			res.end(data);
 		}).catch((err) => {
+			// se l'ID non è stato trovato spedisce un messaggio d'errore
 			if(err.toString().includes("URI query for nonexistent token"))
 				res.end("notfound");
 			else
@@ -637,8 +623,21 @@ app.post('/verify', function(req, res) {
 	}
 });
 
+
+/**
+ * URL per l'aggiunta di un nuovo certificato.
+ * Parametri ricevuti:
+ * 		title (string)
+ * 		description (string)
+ * 		author (string)
+ * 		image (file)
+ * 		document (file)
+ * 
+ * Restituisce l'URL IPFS al client che sarà utilizzato per il minting.
+ */
 app.post('/add', async function(req, res) {
 
+	// Controlla che siano stati inviati i file richiesti
 	if(!req.files || !req.files.image || !req.files.document) {
 		res.sendStatus("400");
 		return;
@@ -646,6 +645,7 @@ app.post('/add', async function(req, res) {
 
 	console.log(`New certificate request:\n\tTitle: ${req.body.title}\n\tDescription: ${req.body.description}\n\tAuthor(s): ${req.body.author}\n\tImage: ${req.files.image.name}\n\tDocument: ${req.files.document.name}`)
 
+	// Memorizzazione dell'oggetto in IPFS; mantenuta la struttura canonica di un descrittore NFT (name, description, image, properties)
 	const metadata = storage.store({
 		name: req.body.title,
 		description: req.body.description,
@@ -662,14 +662,6 @@ app.post('/add', async function(req, res) {
 		res.sendStatus(500);
 	});
 });
-
-/*app.get('*.js', function(req, res) {
-  res.sendFile(`views/${req.originalUrl.split('?').shift()}`, {root: "." });
-});
-
-app.get('*.css', function(req, res) {
-  res.sendFile(`views/${req.originalUrl.split('?').shift()}`, {root: "." });
-});*/
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
