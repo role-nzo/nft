@@ -621,19 +621,20 @@ app.post('/verify', function(req, res) {
 
 	let tokenId = req.body.certificate;
 
-	if(!tokenId || tokenId == '' || tokenId == undefined)
+	if(!tokenId || tokenId == '' || tokenId == undefined || isNaN(tokenId)) {
 		res.end("invalid");
+	} else {
+		tokenId = new Number(tokenId);
 
-	tokenId = new Number(tokenId);
-
-	contract.methods.tokenURI(tokenId.toString()).call().then(function(data) {
-		res.end(data);
-	}).catch((err) => {
-		if(err.toString().includes("URI query for nonexistent token"))
-			res.end("notfound");
-		else
-			res.end("error");
-	});
+		contract.methods.tokenURI(tokenId.toString()).call().then(function(data) {
+			res.end(data);
+		}).catch((err) => {
+			if(err.toString().includes("URI query for nonexistent token"))
+				res.end("notfound");
+			else
+				res.end("error");
+		});
+	}
 });
 
 app.post('/add', async function(req, res) {
