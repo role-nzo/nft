@@ -599,7 +599,8 @@ app.get('/new', function(req, res) {
  * URL per la verifica del certificato.
  * Parametri ricevuti: tokenId (number)
  * 
- * TODO: spostare su client, non è necessario passare per il server
+ * NON spostare su client, è necessario passare per il server per non obbligare l'utente ad utilizzare Metamask sul proprio browser.
+ * 	In questo modo l'esperienza utente per la verifica è più semplice e diretta.
  */
 app.post('/verify', function(req, res) {
 

@@ -14,7 +14,6 @@ class Verifier extends React.Component {
         let id;
         
         // Richiesta al server per la verifica del certificato
-        //  TODO: spostare tutto lato client per interazione diretta col contratto; interazione col server non necessaria
         jQuery.ajax({
             url: '/verify',
             method: 'post',
