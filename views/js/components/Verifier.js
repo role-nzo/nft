@@ -54,9 +54,10 @@ class Verifier extends React.Component {
             method: 'get',
             beforeSend: () => {
                 id = getPopupper().addPopup("Connection to the IPFS network", "Please wait...", 'loading', 0);
+                console.time('IPFSFetch')
             },
             success: (data) => {
-                console.log(data)
+                console.timeEnd('IPFSFetch')
                 getPopupper().addPopup("",
                     (<div className="popup-static-content">
                         <div className="popup-img">

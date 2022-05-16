@@ -10,7 +10,12 @@ if (window.ethereum) {
     w3 = false;
 };
 
-const contract_address = '0x84c694F0c671624de7f77EED5685521b1d5E22ab';
+//rinkeby
+//const contract_address = '0x84c694F0c671624de7f77EED5685521b1d5E22ab';
+
+//goerli
+const contract_address = '0x7aD902e525298698dE05b743e72c11f1032F4EE5';
+
 const abi = [
 	{
 		"inputs": [],

@@ -9,6 +9,7 @@ import bodyParser from 'body-parser';
 /*import * as fs from 'fs';
 import * as IPFS from 'ipfs-core';*/
 import { NFTStorage, File } from 'nft.storage'
+import { performance } from 'perf_hooks';
 
 var app = express();
 app.use(fileUpload({
@@ -23,8 +24,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 const hostname = '127.0.0.1';
 const port = 3000;
-const infura_url = 'https://rinkeby.infura.io/v3/1fb32b70673f49418ad5acb56cb8ed1d';
-const contract_address = '0x84c694F0c671624de7f77EED5685521b1d5E22ab';
+
+//rinkeby
+//const contract_address = '0x84c694F0c671624de7f77EED5685521b1d5E22ab';
+//const infura_url = 'https://rinkeby.infura.io/v3/1fb32b70673f49418ad5acb56cb8ed1d';
+
+//goerli
+const contract_address = '0x7aD902e525298698dE05b743e72c11f1032F4EE5';
+const infura_url = 'https://goerli.infura.io/v3/1fb32b70673f49418ad5acb56cb8ed1d';
 
 const abi = [
 	{
@@ -610,9 +617,10 @@ app.post('/verify', function(req, res) {
 		res.end("invalid");
 	} else {
 		tokenId = new Number(tokenId);
-
+		var startTime = performance.now()
 		// interazione con il contratto per ottenere i dati
 		contract.methods.tokenURI(tokenId.toString()).call().then(function(data) {
+			console.log(`Verify: ${performance.now() - startTime}`);
 			res.end(data);
 		}).catch((err) => {
 			// se l'ID non è stato trovato spedisce un messaggio d'errore
@@ -645,7 +653,7 @@ app.post('/add', async function(req, res) {
 	}
 
 	console.log(`New certificate request:\n\tTitle: ${req.body.title}\n\tDescription: ${req.body.description}\n\tAuthor(s): ${req.body.author}\n\tImage: ${req.files.image.name}\n\tDocument: ${req.files.document.name}`)
-
+	var startTime = performance.now()
 	// Memorizzazione dell'oggetto in IPFS; mantenuta la struttura canonica di un descrittore NFT (name, description, image, properties)
 	const metadata = storage.store({
 		name: req.body.title,
@@ -658,6 +666,7 @@ app.post('/add', async function(req, res) {
 		  }
 		}
 	}).then((data) => {
+		console.log(`IPFS Storage: ${performance.now() - startTime}`);
 		res.end(data.url);
 	}).catch(() => {
 		res.sendStatus(500);

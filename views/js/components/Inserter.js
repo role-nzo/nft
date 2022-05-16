@@ -45,8 +45,13 @@ class Inserter extends React.Component {
             success: (data) => {
                 getPopupper().addPopup("Data successfully added to the IPFS network", "Plase confirm the transaction to mint.", 'success', 10000);
                 popup_id_eth = getPopupper().addPopup("Minting the NFT", "Please wait...", 'loading', 0);
-
-                contract.methods.safeMint(this.props.account, data).send({ from: this.props.account }).then(async (data) => {
+                
+                contract.methods.safeMint(this.props.account, data).send({ from: this.props.account })
+                    .on('transactionHash', () => { console.log('transactionHash'); console.time('Safe Mint') } )
+                    .on('receipt', () => console.timeEnd('Safe Mint'))
+                    .then(async (data) => {
+                    console.log(`Gas Used: ${data.gasUsed}`);
+                    
                     // Per ottenere indietro il tokenId del nuovo NFT
                     let receipt = await w3.eth.getTransactionReceipt(data.transactionHash);
                     let href = "/?tokenid="+ Web3.utils.hexToNumber( receipt.logs[0].topics[3]);
