@@ -15,19 +15,63 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #eaeaea;
+    background-color: #005bea;
+    color: white;
 }
 
-#verifier input, #verifier button {
+#verifier, #verifier > div {
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+}
+
+#verifier h2 {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+#verifier input, #verifier button, #verifier .file-upload, #verifier .fake-button {
     font-size: 1.5em;
     font-family: 'Montserrat';
     border: 0px;
     padding: .75em 1em;
+    margin-bottom: 20px;
+    border-radius: 120px;
+    background-color: white;
 }
 
-#verifier button {
+#verifier .file-upload {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
     cursor: pointer;
-    background-color: #aaaafa;
+}
+
+#verifier input[type=file] {
+    display: none;
+}
+
+#verifier .fake-input {
+    padding: .75em 1em;
+    color: black;
+}
+
+#verifierInput::-webkit-input-placeholder, #verifier .fake-input.placeholder {
+    color: rgba(0,0,0,0.6);
+}
+
+#verifier button, #verifier .fake-button {
+    cursor: pointer;
+    background: linear-gradient(to right, #fcc602, #ff9700);
+    margin-bottom: 0px;
+    color: black;
+}
+
+#verifier .fake-button {
+    font-size: 1em;
+    pointer-events: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 #verifier input:focus {

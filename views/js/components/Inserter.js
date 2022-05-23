@@ -4,6 +4,7 @@ class Inserter extends React.Component {
     constructor(props) {
         super(props);
 
+        this.handleFileChange = this.handleFileChange.bind(this);
         this.insert = this.insert.bind(this);
 
         this.state = {
@@ -15,6 +16,12 @@ class Inserter extends React.Component {
     // Una volta creato l'oggetto viene controllato se l'utente possiede i permessi
     componentDidMount() {
         this.verifyRole();
+    }
+
+    handleFileChange(event) {
+        let fakeInput = document.querySelector(`[for=${event.target.id}] .fake-input`);
+        fakeInput.classList.remove("placeholder");
+        fakeInput.innerHTML = event.target.value.split("\\").at(-1);
     }
 
     // Inserimento del nuovo certificato. Flusso:
@@ -64,7 +71,7 @@ class Inserter extends React.Component {
                 });
             },
             error: () => {
-                getPopupper().addPopup("Connection to the IPFS network failed", "Try again", 'error', 5);
+                getPopupper().addPopup("Error", "Try again", 'error', 5000);
             },
             complete: () => {
                 getPopupper().deletePopup(popup_id_ipfs);
@@ -112,8 +119,16 @@ class Inserter extends React.Component {
                     <input type="text" id="title" name="title" placeholder="Titolo"/>
                     <input type="text" id="author" name="author" placeholder="Autore/i"/>
                     <input type="text" id="description" name="description" placeholder="Descrizione"/>
-                    <input type="file" id="image" name="image" placeholder="Immagine"/>
-                    <input type="file" id="document" name="document" placeholder="Documento"/>
+                    <label htmlFor="image" className="file-upload">
+                        <div className="fake-input placeholder">Immagine</div>
+                        <button className="fake-button" type="button">Sfoglia</button>
+                    </label>
+                    <input type="file" id="image" name="image" placeholder="Immagine" onChange={this.handleFileChange}/>
+                    <label htmlFor="document" className="file-upload">
+                        <div className="fake-input placeholder">Documento</div>
+                        <button className="fake-button" type="button">Sfoglia</button>
+                    </label>
+                    <input type="file" id="document" name="document" placeholder="Documento" onChange={this.handleFileChange}/>
                     <button type="submit">Aggiungi</button>
                 </div>
             );

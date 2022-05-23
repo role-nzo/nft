@@ -35,7 +35,7 @@ class Verifier extends React.Component {
                     this.retrieveIPFSData(data.split("ipfs://")[1]);
             },
             error: (data) => {
-                getPopupper().addPopup("Connection to the server failed", "Try again", 'error', 5);
+                getPopupper().addPopup("Connection to the server failed", "Try again", 'error', 5000);
             },
             complete: (data) => {
                 getPopupper().deletePopup(id);
@@ -75,7 +75,7 @@ class Verifier extends React.Component {
                     , 'static', 0);
             },
             error: () => {
-                getPopupper().addPopup("Connection to the IPFS network failed", "Try again", 'error', 5);
+                getPopupper().addPopup("Connection to the IPFS network failed", "Try again", 'error', 5000);
             },
             complete: () => {
                 getPopupper().deletePopup(id);
@@ -87,7 +87,7 @@ class Verifier extends React.Component {
         return (
             <form id="verifier" onSubmit={this.submit}>
                 <h2>Cerca e verifica certificati</h2>
-                <input type="text" id="verifierInput" name="verifierInput"/>
+                <input type="text" id="verifierInput" name="verifierInput" placeholder="ID Certificato"/>
                 <button type="submit" id="verifierButton">Verifica</button>
             </form>
         );
